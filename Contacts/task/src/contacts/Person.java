@@ -9,12 +9,6 @@ public class Person {
     private String surname;
     private String number = "";
 
-    /*public Person(String name, String surname, String number) {
-        setName(name);
-        setSurname(surname);
-        setNumber(number);
-    }*/
-
     protected String getName() {
         return name;
     }
