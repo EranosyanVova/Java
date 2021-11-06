@@ -1,7 +1,7 @@
 class Cryptor {
+    private static final String ENCRYPT_MODE = "enc";
     private CryptorAlgorithm algorithm;
     private String mode;
-    static final String encryptMode = "enc";
 
     public void setAlgorithm(CryptorAlgorithm algorithm, String mode) {
         this.algorithm = algorithm;
@@ -9,7 +9,7 @@ class Cryptor {
     }
 
     public void useAlgorithm(StringBuilder stringBuilder, int key) {
-        if (mode.equals(encryptMode) || mode.isEmpty()) {
+        if (mode.equals(ENCRYPT_MODE) || mode.isEmpty()) {
             algorithm.encrypt(stringBuilder, key);
         }
         else {
