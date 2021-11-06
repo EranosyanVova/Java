@@ -5,8 +5,8 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        EncDec encDec = new EncDec();
-        StringBuilder string = new StringBuilder("");
+        Cryptor cryptor = new Cryptor();
+        StringBuilder stringBuilder = new StringBuilder();
         int key = 0;
         String alg = "";
         String mode = "";
@@ -18,12 +18,14 @@ public class Main {
         boolean algCheck = false;
 
         for (int i = 0; i < args.length; i += 2) {
-            if (args[i].equals("-mode"))
+            if (args[i].equals("-mode")) {
                 mode = args[i + 1];
-            if (args[i].equals("-key"))
+            }
+            if (args[i].equals("-key")) {
                 key = Integer.parseInt(args[i + 1]);
+            }
             if (args[i].equals("-data")) {
-                string.append(args[i + 1]);
+                stringBuilder.append(args[i + 1]);
                 dataCheck = true;
             }
             if (args[i].equals("-in")) {
@@ -40,34 +42,40 @@ public class Main {
             }
         }
         if (!algCheck || alg.equals("shift")) {
-            encDec.setAlgorithm(new Shift(), mode);
-        } else encDec.setAlgorithm(new Unicode(), mode);
+            cryptor.setAlgorithm(new ShiftAlgorithm(), mode);
+        } else {
+            cryptor.setAlgorithm(new UnicodeAlgorithm(), mode);
+        }
 
         if (!dataCheck && !inCheck) {
-            encDec.useAlgorithm(string, key);
-            System.out.println(string.toString());
-        } else if (dataCheck && inCheck) {
-            encDec.useAlgorithm(string, key);
-            System.out.println(string.toString());
-        } else if (inCheck && !outCheck) {
+            cryptor.useAlgorithm(stringBuilder, key);
+            System.out.println(stringBuilder.toString());
+        }
+        else if (dataCheck && inCheck) {
+            cryptor.useAlgorithm(stringBuilder, key);
+            System.out.println(stringBuilder.toString());
+        }
+        else if (inCheck && !outCheck) {
             try (Scanner scanner = new Scanner(new File(in))) {
-                string.append(scanner.nextLine());
-                encDec.useAlgorithm(string, key);
-                System.out.println(string.toString());
+                stringBuilder.append(scanner.nextLine());
+                cryptor.useAlgorithm(stringBuilder, key);
+                System.out.println(stringBuilder.toString());
             } catch (IOException e) {
                 System.out.println("Error");
             }
-        } else if (inCheck && outCheck) {
+        }
+        else if (inCheck && outCheck) {
             try (Scanner scanner = new Scanner(new File(in));
                  FileWriter writer = new FileWriter(new File(out), false)) {
-                string.append(scanner.nextLine());
-                encDec.useAlgorithm(string, key);
-                writer.write(string.toString());
+                stringBuilder.append(scanner.nextLine());
+                cryptor.useAlgorithm(stringBuilder, key);
+                writer.write(stringBuilder.toString());
             } catch (IOException e) {
                 System.out.println("Error");
             }
-        } else {
-            encDec.useAlgorithm(string, key);
+        }
+        else {
+            cryptor.useAlgorithm(stringBuilder, key);
         }
     }
 }
