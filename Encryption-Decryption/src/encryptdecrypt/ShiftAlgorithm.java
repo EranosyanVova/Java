@@ -1,3 +1,5 @@
+package encryptdecrypt;
+
 public class ShiftAlgorithm implements CryptorAlgorithm {
     private static final int ENGLISH_ALPHABET_LENGTH = 26;
     private static final int FIRST_ENGLISH_LATTER_CODE = 97;

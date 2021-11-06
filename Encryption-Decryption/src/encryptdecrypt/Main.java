@@ -1,7 +1,16 @@
+package encryptdecrypt;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
+
+
+class CryptorParameters {
+
+
+
+}
 
 public class Main {
     public static void main(String[] args) {
@@ -49,22 +58,22 @@ public class Main {
 
         if (!dataCheck && !inCheck) {
             cryptor.useAlgorithm(stringBuilder, key);
-            System.out.println(stringBuilder.toString());
+            System.out.println(stringBuilder);
         }
         else if (dataCheck && inCheck) {
             cryptor.useAlgorithm(stringBuilder, key);
-            System.out.println(stringBuilder.toString());
+            System.out.println(stringBuilder);
         }
         else if (inCheck && !outCheck) {
             try (Scanner scanner = new Scanner(new File(in))) {
                 stringBuilder.append(scanner.nextLine());
                 cryptor.useAlgorithm(stringBuilder, key);
-                System.out.println(stringBuilder.toString());
+                System.out.println(stringBuilder);
             } catch (IOException e) {
                 System.out.println("Error");
             }
         }
-        else if (inCheck && outCheck) {
+        else if (inCheck) {
             try (Scanner scanner = new Scanner(new File(in));
                  FileWriter writer = new FileWriter(new File(out), false)) {
                 stringBuilder.append(scanner.nextLine());

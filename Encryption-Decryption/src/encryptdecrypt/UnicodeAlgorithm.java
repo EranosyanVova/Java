@@ -1,3 +1,5 @@
+package encryptdecrypt;
+
 public class UnicodeAlgorithm implements CryptorAlgorithm {
 
     public void encrypt(StringBuilder stringBuilder, int key) {
