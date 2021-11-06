@@ -1,90 +1,75 @@
 package encryptdecrypt;
 
+import encryptdecrypt.algorithm.ShiftAlgorithm;
+import encryptdecrypt.algorithm.UnicodeAlgorithm;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-
-class CryptorParameters {
-
-
-
-}
-
 public class Main {
+
     public static void main(String[] args) {
-        Cryptor cryptor = new Cryptor();
-        StringBuilder stringBuilder = new StringBuilder();
-        int key = 0;
-        String alg = "";
-        String mode = "";
-        String in = "";
-        String out = "";
-        boolean inCheck = false;
-        boolean outCheck = false;
-        boolean dataCheck = false;
-        boolean algCheck = false;
+        CryptorParameters cryptorParameters = parseArgumentsToParameters(args);
+
+        Cryptor cryptor = new Cryptor(
+                cryptorParameters.useUnicodeAlgorithm() ? new UnicodeAlgorithm() : new ShiftAlgorithm(),
+                cryptorParameters.mode
+        );
+
+        if (cryptorParameters.shouldReadStringToCryptFromFile()) {
+            cryptorParameters.stringToCrypt = readFromFile(cryptorParameters.inputFilePath);
+        }
+
+        String result = cryptor.useAlgorithm(cryptorParameters.stringToCrypt, cryptorParameters.key);
+
+        if (cryptorParameters.outFilePath != null) {
+            writeToFile(cryptorParameters.outFilePath, result);
+        } else {
+            System.out.println(result);
+        }
+    }
+
+    private static CryptorParameters parseArgumentsToParameters(String[] args) {
+        CryptorParameters parameters = new CryptorParameters();
 
         for (int i = 0; i < args.length; i += 2) {
             if (args[i].equals("-mode")) {
-                mode = args[i + 1];
+                parameters.mode = args[i + 1];
             }
             if (args[i].equals("-key")) {
-                key = Integer.parseInt(args[i + 1]);
+                parameters.key = Integer.parseInt(args[i + 1]);
             }
             if (args[i].equals("-data")) {
-                stringBuilder.append(args[i + 1]);
-                dataCheck = true;
+                parameters.stringToCrypt = (args[i + 1]);
             }
             if (args[i].equals("-in")) {
-                in = args[i + 1];
-                inCheck = true;
+                parameters.inputFilePath = args[i + 1];
             }
             if (args[i].equals("-out")) {
-                out = args[i + 1];
-                outCheck = true;
+                parameters.outFilePath = args[i + 1];
             }
             if (args[i].equals("-alg")) {
-                alg = args[i + 1];
-                algCheck = true;
+                parameters.algorithmName = args[i + 1];
             }
         }
-        if (!algCheck || alg.equals("shift")) {
-            cryptor.setAlgorithm(new ShiftAlgorithm(), mode);
-        } else {
-            cryptor.setAlgorithm(new UnicodeAlgorithm(), mode);
-        }
+        return parameters;
+    }
 
-        if (!dataCheck && !inCheck) {
-            cryptor.useAlgorithm(stringBuilder, key);
-            System.out.println(stringBuilder);
+    private static String readFromFile(String path) {
+        try (Scanner scanner = new Scanner(new File(path))) {
+            return scanner.nextLine();
+        } catch (IOException e) {
+            System.out.println("Error while reading from file: " + path);
+            throw new RuntimeException(e.getMessage(), e.getCause());
         }
-        else if (dataCheck && inCheck) {
-            cryptor.useAlgorithm(stringBuilder, key);
-            System.out.println(stringBuilder);
-        }
-        else if (inCheck && !outCheck) {
-            try (Scanner scanner = new Scanner(new File(in))) {
-                stringBuilder.append(scanner.nextLine());
-                cryptor.useAlgorithm(stringBuilder, key);
-                System.out.println(stringBuilder);
-            } catch (IOException e) {
-                System.out.println("Error");
-            }
-        }
-        else if (inCheck) {
-            try (Scanner scanner = new Scanner(new File(in));
-                 FileWriter writer = new FileWriter(new File(out), false)) {
-                stringBuilder.append(scanner.nextLine());
-                cryptor.useAlgorithm(stringBuilder, key);
-                writer.write(stringBuilder.toString());
-            } catch (IOException e) {
-                System.out.println("Error");
-            }
-        }
-        else {
-            cryptor.useAlgorithm(stringBuilder, key);
+    }
+
+    private static void writeToFile(String path, String data) {
+        try (FileWriter writer = new FileWriter(path, false)) {
+            writer.write(data);
+        } catch (IOException e) {
+            System.out.println("Error while writing to file: " + path);
         }
     }
 }

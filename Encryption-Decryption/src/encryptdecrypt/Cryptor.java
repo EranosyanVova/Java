@@ -1,21 +1,21 @@
 package encryptdecrypt;
 
+import encryptdecrypt.algorithm.CryptorAlgorithm;
+
 class Cryptor {
     private static final String ENCRYPT_MODE = "enc";
-    private CryptorAlgorithm algorithm;
-    private String mode;
+    private final CryptorAlgorithm algorithm;
+    private final String mode;
 
-    public void setAlgorithm(CryptorAlgorithm algorithm, String mode) {
+    public Cryptor(CryptorAlgorithm algorithm, String mode) {
         this.algorithm = algorithm;
         this.mode = mode;
     }
 
-    public void useAlgorithm(StringBuilder stringBuilder, int key) {
-        if (mode.equals(ENCRYPT_MODE) || mode.isEmpty()) {
-            algorithm.encrypt(stringBuilder, key);
+    public String useAlgorithm(String stringToCrypt, int key) {
+        if (ENCRYPT_MODE.equals(mode) || mode.isEmpty()) {
+            return algorithm.encrypt(stringToCrypt, key);
         }
-        else {
-            algorithm.decrypt(stringBuilder, key);
-        }
+        return algorithm.decrypt(stringToCrypt, key);
     }
 }
