@@ -1,5 +1,9 @@
 package contacts;
 
+import contacts.createrecord.*;
+import contacts.editrecord.*;
+import contacts.phonebookrecord.*;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -47,10 +51,10 @@ public class PhoneBook {
         choose = scanner.nextLine();
         CreateRecord createRecord;
         if ("person".equals(choose)) {
-            createRecord = new AddPersonInPhoneBook();
+            createRecord = new CreatePersonInPhoneBook();
         }
         else if ("organization".equals(choose)) {
-            createRecord = new AddOrganizationInPhoneBook();
+            createRecord = new CreateOrganizationInPhoneBook();
         }
         else {
             System.out.println("Wrong choose: " + choose);
@@ -110,125 +114,4 @@ public class PhoneBook {
 
     }
 
-}
-
-
-interface EditRecord {
-    Scanner scanner = new Scanner(System.in);
-    void editRecord();
-}
-
-class EditPersonInPhoneBook implements EditRecord {
-    Person person;
-
-    public EditPersonInPhoneBook(PhoneBookRecord phoneBookRecord) {
-        person = (Person) phoneBookRecord;
-    }
-
-    @Override
-    public void editRecord() {
-        System.out.print("Select a field (name, surname, birth, gender, number): ");
-        String lineToEdit = scanner.nextLine();
-        switch (lineToEdit) {
-            case "name":
-                System.out.print("Enter the name: ");
-                person.setName(scanner.nextLine());
-                break;
-            case "surname":
-                System.out.print("Enter the surname: ");
-                person.setSurname(scanner.nextLine());
-                break;
-            case "birth":
-                System.out.print("Enter the birth date: ");
-                person.setBirthDay(scanner.nextLine());
-                break;
-            case "gender":
-                System.out.print("Enter the gender (M, F): ");
-                person.setGender(scanner.nextLine());
-                break;
-            case "number":
-                System.out.print("Enter number: ");
-                person.setNumber(scanner.nextLine());
-                break;
-            default:
-                System.out.println("Wrong choose: " + lineToEdit);
-        }
-        person.setLastEditTime();
-    }
-}
-
-class EditOrganizationInPhoneBook implements EditRecord {
-    Organization organization;
-
-    public EditOrganizationInPhoneBook(PhoneBookRecord phoneBookRecord) {
-        organization = (Organization) phoneBookRecord;
-    }
-
-    @Override
-    public void editRecord() {
-        System.out.print("Select a field (name, address, number): ");
-        String lineToEdit = scanner.nextLine();
-        switch (lineToEdit) {
-            case "name":
-                System.out.print("Enter the name: ");
-                organization.setName(scanner.nextLine());
-                break;
-            case "address":
-                System.out.print("Enter the surname: ");
-                organization.setAddress(scanner.nextLine());
-                break;
-            case "number":
-                System.out.print("Enter number: ");
-                organization.setNumber(scanner.nextLine());
-                break;
-            default:
-                System.out.println("Wrong choose: " + lineToEdit);
-        }
-        organization.setLastEditTime();
-    }
-}
-
-
-
-
-
-
-
-interface CreateRecord {
-    Scanner scanner = new Scanner(System.in);
-    PhoneBookRecord creatRecord();
-}
-
-class AddPersonInPhoneBook implements CreateRecord {
-
-    @Override
-    public PhoneBookRecord creatRecord() {
-        Person person = new Person();
-        System.out.print("Enter the name: ");
-        person.setName(scanner.nextLine());
-        System.out.print("Enter the surname: ");
-        person.setSurname(scanner.nextLine());
-        System.out.print("Enter the birth date: ");
-        person.setBirthDay(scanner.nextLine());
-        System.out.print("Enter the gender: ");
-        person.setGender(scanner.nextLine());
-        System.out.print("Enter the number: ");
-        person.setNumber(scanner.nextLine());
-        return person;
-    }
-}
-
-class AddOrganizationInPhoneBook implements CreateRecord {
-
-    @Override
-    public PhoneBookRecord creatRecord() {
-        Organization organization = new Organization();
-        System.out.print("Enter the organization name: ");
-        organization.setName(scanner.nextLine());
-        System.out.print("Enter the address: ");
-        organization.setAddress(scanner.nextLine());
-        System.out.print("Enter the number: ");
-        organization.setNumber(scanner.nextLine());
-        return organization;
-    }
 }
