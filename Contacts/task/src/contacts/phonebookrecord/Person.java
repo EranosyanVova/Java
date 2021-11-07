@@ -27,7 +27,7 @@ public class Person extends PhoneBookRecord{
     }
 
     public Person setGender(String gender) {
-        if (gender.equalsIgnoreCase("M") || gender.equalsIgnoreCase("F")) {
+        if ("M".equalsIgnoreCase(gender) || "F".equalsIgnoreCase(gender)) {
             this.gender = gender;
         } else {
             System.out.println("Bad gender!");
