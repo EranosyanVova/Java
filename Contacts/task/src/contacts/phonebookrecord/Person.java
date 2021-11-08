@@ -3,7 +3,7 @@ package contacts.phonebookrecord;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-public class Person extends PhoneBookRecord{
+public class Person extends PhoneBookRecord {
     private String surname;
     private String gender;
     private LocalDate birthDay;
@@ -48,8 +48,9 @@ public class Person extends PhoneBookRecord{
         return this;
     }
 
-    public String getFullName() {
-        return getName() + " " + getSurname();
+    @Override
+    public String getName() {
+        return super.getName() + " " + getSurname();
     }
 
     @Override

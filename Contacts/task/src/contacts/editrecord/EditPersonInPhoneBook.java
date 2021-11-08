@@ -39,5 +39,6 @@ public class EditPersonInPhoneBook implements EditRecord {
                 System.out.println("Wrong choose: " + lineToEdit);
         }
         person.setLastEditTime();
+        System.out.println("Saved");
     }
 }

@@ -20,7 +20,7 @@ public class EditOrganizationInPhoneBook implements EditRecord {
                 organization.setName(scanner.nextLine());
                 break;
             case "address":
-                System.out.print("Enter the surname: ");
+                System.out.print("Enter the address: ");
                 organization.setAddress(scanner.nextLine());
                 break;
             case "number":
@@ -31,5 +31,6 @@ public class EditOrganizationInPhoneBook implements EditRecord {
                 System.out.println("Wrong choose: " + lineToEdit);
         }
         organization.setLastEditTime();
+        System.out.println("Saved");
     }
 }
