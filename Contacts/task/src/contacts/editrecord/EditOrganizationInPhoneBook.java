@@ -4,33 +4,33 @@ import contacts.phonebookrecord.Organization;
 import contacts.phonebookrecord.PhoneBookRecord;
 
 public class EditOrganizationInPhoneBook implements EditRecord {
-    Organization organization;
+    final Organization organizationRecord;
 
     public EditOrganizationInPhoneBook(PhoneBookRecord phoneBookRecord) {
-        organization = (Organization) phoneBookRecord;
+        organizationRecord = (Organization) phoneBookRecord;
     }
 
     @Override
     public void editRecord() {
-        System.out.print("Select a field (name, address, number): ");
-        String lineToEdit = scanner.nextLine();
-        switch (lineToEdit) {
-            case "name":
+        System.out.printf("Select a field (%s): ", RecordsField.getOrganizationField());
+        String lineToEdit = scanner.nextLine().toUpperCase();
+        switch (RecordsField.valueOf(lineToEdit)) {
+            case NAME:
                 System.out.print("Enter the name: ");
-                organization.setName(scanner.nextLine());
+                organizationRecord.setName(scanner.nextLine());
                 break;
-            case "address":
+            case ADDRESS:
                 System.out.print("Enter the address: ");
-                organization.setAddress(scanner.nextLine());
+                organizationRecord.setAddress(scanner.nextLine());
                 break;
-            case "number":
+            case NUMBER:
                 System.out.print("Enter number: ");
-                organization.setNumber(scanner.nextLine());
+                organizationRecord.setNumber(scanner.nextLine());
                 break;
             default:
                 System.out.println("Wrong choose: " + lineToEdit);
         }
-        organization.setLastEditTime();
+        organizationRecord.setLastEditTime();
         System.out.println("Saved");
     }
 }

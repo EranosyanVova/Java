@@ -6,5 +6,5 @@ import java.util.Scanner;
 
 public interface CreateRecord {
     Scanner scanner = new Scanner(System.in);
-    PhoneBookRecord creatRecord();
+    PhoneBookRecord createNewRecord();
 }

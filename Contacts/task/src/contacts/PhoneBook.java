@@ -5,39 +5,35 @@ import contacts.editrecord.*;
 import contacts.phonebookrecord.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class PhoneBook implements Serializable {
-    static Scanner scanner = new Scanner(System.in);
-    private ArrayList<PhoneBookRecord> phoneBook;
-
-    public PhoneBook() {
-        phoneBook = new ArrayList<>();
-    }
+    private Scanner scanner = new Scanner(System.in);
+    private List<PhoneBookRecord> phoneBook = new ArrayList<>();
 
     public void menu() {
         String choose;
         do {
-            System.out.print("[menu] Enter action (add, list, search, count, exit): ");
-            choose = scanner.nextLine();
-            switch (choose) {
-                case "add":
-                    addRecordInPhoneBook();
+            System.out.printf("[menu] Enter action (%s): ", Action.getActionsForMenu());
+            choose = scanner.nextLine().toUpperCase();
+            switch (Action.valueOf(choose)) {
+                case ADD:
+                    addRecord();
                     break;
-                case "list":
-                    if (list(phoneBook)) {
+                case LIST:
+                    if (listOfRecords(phoneBook)) {
                         listChoose();
                     }
                     break;
-                case "search":
-                    search();
+                case SEARCH:
+                    searchQuery();
                     break;
-                case "count":
+                case COUNT:
                     System.out.printf("The Phone Book has %d records.\n", phoneBook.size());
                     break;
-                case "exit":
+                case EXIT:
                     System.exit(0);
-                    break;
                 default:
                     System.out.println("Wrong choose: " + choose);
             }
@@ -45,21 +41,23 @@ public class PhoneBook implements Serializable {
         } while (true);
     }
 
-    protected void search() {
+    protected void searchQuery() {
         System.out.print("Enter search query: ");
         String choose = scanner.nextLine();
-        ArrayList<PhoneBookRecord> searchResult = search(choose);
-        list(searchResult);
+
+        List<PhoneBookRecord> searchResult = search(choose);
+
+        listOfRecords(searchResult);
         searchChoose(searchResult);
     }
 
-    protected void searchChoose(ArrayList<PhoneBookRecord> searchResult) {
-        System.out.print("\n[search] Enter action ([number], back, again): ");
-        String choose = scanner.nextLine();
-        switch (choose) {
-            case "again":
-                search();
-            case "back":
+    protected void searchChoose(List<PhoneBookRecord> searchResult) {
+        System.out.printf("\n[search] Enter action (%s): ", Action.getActionsForSearch());
+        String choose = scanner.nextLine().toUpperCase();
+        switch (Action.valueOf(choose)) {
+            case AGAIN:
+                searchQuery();
+            case BACK:
                 break;
             default:
                 int numberOfRecord;
@@ -69,10 +67,13 @@ public class PhoneBook implements Serializable {
                     System.out.println("Error! Not a number: " + choose);
                     break;
                 }
-                System.out.println(searchResult.get(numberOfRecord));
+                PhoneBookRecord chosenRecord = searchResult.get(numberOfRecord);
+                System.out.println(chosenRecord);
+
                 for (int i = 0; i < phoneBook.size(); i++) {
-                    if (phoneBook.get(i).getName().equals(searchResult.get(numberOfRecord).getName()) &&
-                            phoneBook.get(i).getNumber().equals(searchResult.get(numberOfRecord).getNumber())) {
+                    PhoneBookRecord currentRecord = phoneBook.get(i);
+                    if (currentRecord.getName().equals(chosenRecord.getName()) &&
+                            currentRecord.getNumber().equals(chosenRecord.getNumber())) {
                         numberOfRecord = i;
                         break;
                     }
@@ -81,8 +82,8 @@ public class PhoneBook implements Serializable {
         }
     }
 
-    protected ArrayList<PhoneBookRecord> search(String query) {
-        ArrayList<PhoneBookRecord> searchResult = new ArrayList<>();
+    protected List<PhoneBookRecord> search(String query) {
+        List<PhoneBookRecord> searchResult = new ArrayList<>();
         String regex = "(?i).*" + query + ".*";
         for (PhoneBookRecord phoneBookRecord : phoneBook) {
             if (phoneBookRecord.getName().matches(regex) || phoneBookRecord.getNumber().matches(regex)) {
@@ -93,7 +94,7 @@ public class PhoneBook implements Serializable {
     }
 
     protected void listChoose() {
-        System.out.print("\n[list] Enter action ([number], back): ");
+        System.out.printf("\n[list] Enter action (%s): ", Action.getActionsForList());
         String choose = scanner.nextLine();
         if (!"back".equals(choose)) {
             int numberOfRecord;
@@ -110,55 +111,59 @@ public class PhoneBook implements Serializable {
     }
 
     protected void recordChoose(int numberOfRecord){
-        System.out.print("\n[record] Enter action (edit, delete, menu): ");
-        String choose = scanner.nextLine();
-        switch (choose) {
-            case "edit":
-                edit(numberOfRecord, phoneBook);
+        System.out.printf("\n[record] Enter action (%s): ", Action.getActionsForRecord());
+        String choose = scanner.nextLine().toUpperCase();
+        switch (Action.valueOf(choose)) {
+            case EDIT:
+                editChosenRecord(numberOfRecord, phoneBook);
                 System.out.println(phoneBook.get(numberOfRecord));
                 recordChoose(numberOfRecord);
                 break;
-            case "delete":
-                delete(numberOfRecord);
-            case "menu":
+            case DELETE:
+                deleteRecord(numberOfRecord);
+            case MENU:
                 break;
         }
     }
 
-    protected void addRecordInPhoneBook() {
-        String choose;
+    protected void addRecord() {
         System.out.print("Enter the type (person, organization): ");
-        choose = scanner.nextLine();
-        CreateRecord createRecord;
-        if ("person".equals(choose)) {
-            createRecord = new CreatePersonInPhoneBook();
-        }
-        else if ("organization".equals(choose)) {
-            createRecord = new CreateOrganizationInPhoneBook();
-        }
-        else {
-            System.out.println("Wrong choose: " + choose);
+        String choose = scanner.nextLine();
+        CreateRecord createRecord = createRecordByType(choose);
+        if (createRecord == null) {
             return;
         }
-        phoneBook.add(createRecord.creatRecord());
+        phoneBook.add(createRecord.createNewRecord());
         System.out.println("The record added.");
     }
 
-    protected boolean list(ArrayList<PhoneBookRecord> arrayList) {
-        if (!phoneBook.isEmpty()) {
-            for (int i = 0; i < arrayList.size(); i++) {
-                System.out.printf("%d. %s \n", i + 1, arrayList.get(i).getName());
-            }
-            return true;
-        } else {
-            System.out.println("The Phone Book has 0 records.");
-            return false;
+    protected CreateRecord createRecordByType(String recordType) {
+        if ("person".equals(recordType)) {
+            return new CreatePersonInPhoneBook();
+        }
+        else if ("organization".equals(recordType)) {
+            return new CreateOrganizationInPhoneBook();
+        }
+        else {
+            System.out.println("Wrong choose: " + recordType);
+            return null;
         }
     }
 
-    protected void delete(int choose) {
+    protected boolean listOfRecords(List<PhoneBookRecord> phoneBookRecords) {
         if (!phoneBook.isEmpty()) {
-            phoneBook.remove(choose);
+            for (int i = 0; i < phoneBookRecords.size(); i++) {
+                System.out.printf("%d. %s \n", i + 1, phoneBookRecords.get(i).getName());
+            }
+            return true;
+        }
+        System.out.println("The Phone Book has 0 records.");
+        return false;
+    }
+
+    protected void deleteRecord(int numberOfRecord) {
+        if (!phoneBook.isEmpty()) {
+            phoneBook.remove(numberOfRecord);
             System.out.println("The record removed!");
         }
         else {
@@ -166,24 +171,25 @@ public class PhoneBook implements Serializable {
         }
     }
 
-    protected void edit(int choose, ArrayList<PhoneBookRecord> arrayList) {
-        if (!arrayList.isEmpty()) {
-            EditRecord editRecord;
-            if (arrayList.get(choose).isPeople()) {
-                editRecord = new EditPersonInPhoneBook(arrayList.get(choose));
-            } else {
-                editRecord = new EditOrganizationInPhoneBook(arrayList.get(choose));
-            }
-            editRecord.editRecord();
-            System.out.println("The record updated!");
-        }
-        else {
+    protected void editChosenRecord(int choose, List<PhoneBookRecord> phoneBookRecords) {
+        if (phoneBookRecords.isEmpty()) {
             System.out.println("No records to edit!");
+            return;
         }
+        EditRecord editChosenRecordInPhoneBook = editRecordByType(choose, phoneBookRecords);
+        editChosenRecordInPhoneBook.editRecord();
+        System.out.println("The record updated!");
 
     }
 
-    public ArrayList<PhoneBookRecord> getPhoneBook() {
+    protected EditRecord editRecordByType(int choose, List<PhoneBookRecord> phoneBookRecords) {
+        if (phoneBookRecords.get(choose).isPeople()) {
+            return new EditPersonInPhoneBook(phoneBookRecords.get(choose));
+        }
+        return new EditOrganizationInPhoneBook(phoneBookRecords.get(choose));
+    }
+
+    public List<PhoneBookRecord> getPhoneBook() {
         return phoneBook;
     }
 

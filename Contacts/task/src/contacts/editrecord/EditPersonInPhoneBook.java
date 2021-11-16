@@ -4,41 +4,41 @@ import contacts.phonebookrecord.Person;
 import contacts.phonebookrecord.PhoneBookRecord;
 
 public class EditPersonInPhoneBook implements EditRecord {
-    Person person;
+    final Person personRecord;
 
     public EditPersonInPhoneBook(PhoneBookRecord phoneBookRecord) {
-        person = (Person) phoneBookRecord;
+        personRecord = (Person) phoneBookRecord;
     }
 
     @Override
     public void editRecord() {
-        System.out.print("Select a field (name, surname, birth, gender, number): ");
-        String lineToEdit = scanner.nextLine();
-        switch (lineToEdit) {
-            case "name":
+        System.out.printf("Select a field (%s): ", RecordsField.getPersonField());
+        String lineToEdit = scanner.nextLine().toUpperCase();
+        switch (RecordsField.valueOf(lineToEdit)) {
+            case NAME:
                 System.out.print("Enter the name: ");
-                person.setName(scanner.nextLine());
+                personRecord.setName(scanner.nextLine());
                 break;
-            case "surname":
+            case SURNAME:
                 System.out.print("Enter the surname: ");
-                person.setSurname(scanner.nextLine());
+                personRecord.setSurname(scanner.nextLine());
                 break;
-            case "birth":
+            case BIRTH:
                 System.out.print("Enter the birth date: ");
-                person.setBirthDay(scanner.nextLine());
+                personRecord.setBirthDay(scanner.nextLine());
                 break;
-            case "gender":
+            case GENDER:
                 System.out.print("Enter the gender (M, F): ");
-                person.setGender(scanner.nextLine());
+                personRecord.setGender(scanner.nextLine());
                 break;
-            case "number":
+            case NUMBER:
                 System.out.print("Enter number: ");
-                person.setNumber(scanner.nextLine());
+                personRecord.setNumber(scanner.nextLine());
                 break;
             default:
                 System.out.println("Wrong choose: " + lineToEdit);
         }
-        person.setLastEditTime();
+        personRecord.setLastEditTime();
         System.out.println("Saved");
     }
 }
